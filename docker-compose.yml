@@ -1,0 +1,13 @@
+version: "3"
+services:
+  hotel-management:
+    image: hotel-images
+    build: .
+    container_name: hotel-management
+    restart: unless-stopped
+    volumes:
+      - ./.env:/app/.env
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
