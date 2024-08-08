@@ -1,3 +1,4 @@
+// models/models.go
 package models
 
 import "gorm.io/gorm"
@@ -6,39 +7,62 @@ type User struct {
     gorm.Model
     Username string `gorm:"unique"`
     Email    string `gorm:"unique"`
-    Coins    []Coins
-    Orders   []Order
-    Invoices []Invoice `gorm:"foreignKey:UserID"` // Tambahkan foreign key
+    Bookings []Booking
+    Invoices []Invoice
 }
 
-type Coins struct {
+type Hotel struct {
     gorm.Model
-    UserID  uint `gorm:"index"`
-    Balance int
+    Name       string
+    Address    string
+    Rooms      []Room
 }
 
-type Order struct {
+type Room struct {
     gorm.Model
-    OrderID     string `gorm:"unique"`
+    RoomID      string `gorm:"unique"`
+    HotelID     uint   `gorm:"index"`
+    Category    string
+    Price       int
+    Rating      float64
+    Reviews     []Review
+}
+
+type Review struct {
+    gorm.Model
+    RoomID      uint   `gorm:"index"`
     UserID      uint   `gorm:"index"`
-    Status      string
+    Rating      float64
+    Comment     string
+}
+
+type Booking struct {
+    gorm.Model
+    BookingID   string `gorm:"unique"`
+    RoomID      uint   `gorm:"index"`
+    UserID      uint   `gorm:"index"`
+    CheckInDate string
+    CheckOutDate string
     TotalAmount int
-    Invoices    []Invoice `gorm:"foreignKey:OrderID"` // Tambahkan foreign key
+    PaymentID   string `gorm:"index"`
+    Payment     Payment
+    User        User
+    Room        Room
+}
+
+type Payment struct {
+    gorm.Model
+    PaymentID   string `gorm:"unique"`
+    BookingID   uint   `gorm:"index"`
+    Amount      int
+    Status      string
 }
 
 type Invoice struct {
     gorm.Model
-    InvoiceID  string `gorm:"unique"`
-    OrderID    uint   `gorm:"index"`
-    UserID     uint   `gorm:"index"` // Tambahkan field UserID
-    Amount     int
-    Status     string
-}
-
-type TopUpTransaction struct {
-    gorm.Model
-    TransactionID string `gorm:"unique"`
-    UserID        uint   `gorm:"index"`
-    Amount        int
-    Status        string
+    InvoiceID   string `gorm:"unique"`
+    UserID      uint   `gorm:"index"`
+    Amount      int
+    Status      string
+    User        User
 }
