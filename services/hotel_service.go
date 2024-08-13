@@ -14,6 +14,10 @@ type HotelServiceImpl struct {
     DB *gorm.DB
 }
 
-func (s *HotelServiceImpl) GetAllHotel(hotel *[]models.User) error {
-    return s.DB.Find(hotel).Error
+func (s *HotelServiceImpl) CreateHotel(hotel *models.Hotel) error {
+    return s.DB.Create(hotel).Error
+}
+
+func (s *HotelServiceImpl) GetAllHotel(hotel *[]models.Hotel) error {
+    return s.DB.Preload("Rooms").Find(hotel).Error
 }

@@ -35,23 +35,43 @@ func (c *RoomController) GetRoomByID(ctx *gin.Context) {
         return
     }
 
-    ctx.JSON(http.StatusOK, room)
+    ctx.JSON(http.StatusOK, gin.H{
+        "status": "success",
+        "data": room,
+    })
 }
 
 func (c *RoomController) UpdateRoom(ctx *gin.Context) {
     var room models.Room
+    
+    // Ambil ID dari URL path
+    id, _ := strconv.Atoi(ctx.Param("id"))
+    // Temukan room berdasarkan ID yang diberikan
+    _, err := c.Service.GetRoomByID(uint(id));
+    if err != nil {
+        ctx.JSON(http.StatusNotFound, gin.H{"error": "Room not found"})
+        return
+    }
+
+    // Bind JSON data ke room model, kecuali ID
     if err := ctx.BindJSON(&room); err != nil {
         ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
-    if err := c.Service.UpdateRoom(&room); err != nil {
+    // Simpan perubahan pada room
+    if err := c.Service.UpdateRoom(uint(id), &room); err != nil {
         ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
 
-    ctx.JSON(http.StatusOK, room)
+    ctx.JSON(http.StatusOK, gin.H{
+        "status":  "success",
+        "message": "Room successfully updated",
+        "data":    room,
+    })
 }
+
 
 func (c *RoomController) DeleteRoom(ctx *gin.Context) {
     id, _ := strconv.Atoi(ctx.Param("id"))
@@ -74,5 +94,8 @@ func (c *RoomController) FilterRooms(ctx *gin.Context) {
         return
     }
 
-    ctx.JSON(http.StatusOK, rooms)
+    ctx.JSON(http.StatusOK, gin.H{
+        "status": "success",
+        "data": rooms,
+    })
 }

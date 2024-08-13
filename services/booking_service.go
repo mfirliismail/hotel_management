@@ -22,7 +22,7 @@ func (s *BookingServiceImpl) CreateBooking(booking *models.Booking) error {
 
 func (s *BookingServiceImpl) GetBookingByID(id uint) (models.Booking, error) {
     var booking models.Booking
-    err := s.DB.First(&booking, id).Error
+    err := s.DB.Preload("Payment.User.Room").First(&booking, id).Error
     return booking, err
 }
 

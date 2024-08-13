@@ -20,7 +20,6 @@ type Hotel struct {
 
 type Room struct {
     gorm.Model
-    RoomID      string `gorm:"unique"`
     HotelID     uint   `gorm:"index"`
     Category    string
     Price       int
@@ -45,7 +44,9 @@ type Booking struct {
     CheckOutDate string
     TotalAmount int
     PaymentID   string `gorm:"index"`
+    InvoiceID   string `gorm:"index"`
     Payment     Payment
+    Invoice     Invoice
     User        User
     Room        Room
 }

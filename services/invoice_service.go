@@ -21,5 +21,5 @@ func (s *InvoiceServiceImpl) CreateInvoice(invoice *models.Invoice) error {
 
 // GetInvoiceByID retrieves an invoice by ID and stores it in the provided invoice pointer.
 func (s *InvoiceServiceImpl) GetInvoiceByID(id uint, invoice *models.Invoice) error {
-    return s.DB.First(invoice, id).Error
+    return s.DB.Preload("User").First(invoice, id).Error
 }

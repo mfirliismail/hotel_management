@@ -19,6 +19,7 @@ func SetupRouter() *gin.Engine {
     roomService := &services.RoomServiceImpl{DB: db}
     bookingService := &services.BookingServiceImpl{DB: db}
     paymentService := &services.PaymentServiceImpl{DB: db}
+    hotelService := &services.HotelServiceImpl{DB: db}
 
     // Initialize controllers
     userController := &controllers.UserController{Service: userService}
@@ -26,11 +27,15 @@ func SetupRouter() *gin.Engine {
     roomController := &controllers.RoomController{Service: roomService}
     bookingController := &controllers.BookingController{Service: bookingService}
     paymentController := &controllers.PaymentController{Service: paymentService}
+    hotelController := &controllers.HotelController{Service: hotelService}
 
     // Define routes
     router.POST("/user", userController.CreateUser)
     router.GET("/user/:id", userController.GetUserByID)
     router.GET("/user", userController.GetAllUsers)
+
+    router.POST("/hotel", hotelController.CreateHotel)
+    router.GET("/hotel", hotelController.GetAllHotel)
 
     router.POST("/invoice", invoiceController.CreateInvoice)
     router.GET("/invoice/:id", invoiceController.GetInvoiceByID)

@@ -9,7 +9,7 @@ import (
 type RoomService interface {
     CreateRoom(room *models.Room) error
     GetRoomByID(id uint) (models.Room, error)
-    UpdateRoom(room *models.Room) error
+    UpdateRoom(id uint, room *models.Room) error
     DeleteRoom(id uint) error
     FilterRooms(category string, minPrice, maxPrice int) ([]models.Room, error)
 }
@@ -24,12 +24,13 @@ func (s *RoomServiceImpl) CreateRoom(room *models.Room) error {
 
 func (s *RoomServiceImpl) GetRoomByID(id uint) (models.Room, error) {
     var room models.Room
-    err := s.DB.First(&room, id).Error
+    err := s.DB.Preload("Reviews").First(&room, id).Error
     return room, err
 }
 
-func (s *RoomServiceImpl) UpdateRoom(room *models.Room) error {
-    return s.DB.Save(room).Error
+func (s *RoomServiceImpl) UpdateRoom(id uint, room *models.Room) error {
+    // Use Updates to only update fields that are non-zero in the struct
+    return s.DB.Model(&models.Room{}).Where("id = ?", id).Updates(room).Error
 }
 
 func (s *RoomServiceImpl) DeleteRoom(id uint) error {
